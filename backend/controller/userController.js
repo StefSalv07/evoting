@@ -1,6 +1,6 @@
 // controllers/userController.js
 
-const User = require("../model/userSchema");
+const userSchema = require("../model/userModel");
 
 exports.createUser = async (req, res) => {
   try {
@@ -11,6 +11,19 @@ exports.createUser = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
+exports.adduser = (req,res)=>{
+    const user = new  userSchema(req.body)
+    user.save().then((err)=>{
+        if(!user){
+            return res.status(400).json({error: 'User not added'})
+        }
+        res.status(200).json({
+            message: 'User Added',
+            data: user
+        })
+    })
+}
 
 exports.getUser = async (req, res) => {
   try {

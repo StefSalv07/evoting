@@ -1,5 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
+
 const app = express();
 app.use(express.json()); // for parsing application/json
 app.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
@@ -16,3 +17,14 @@ mongoose
   .catch((err) => {
     console.log(err);
   });
+
+// Routes
+const userRoutes = require("./routes/userRoutes");
+const loginRoutes = require("./routes/loginRoutes");
+const categoryRoutes = require("./routes/categoryRoutes");
+const candidateRoutes = require("./routes/candidateRoutes");
+
+app.use("/", userRoutes);
+app.use("/login", loginRoutes);
+app.use("/category", categoryRoutes);
+app.use("/candidate", candidateRoutes);

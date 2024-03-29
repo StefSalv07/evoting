@@ -1,8 +1,8 @@
 // model/userSchema.js
 
 const mongoose = require("mongoose");
-
-const userSchema = new mongoose.Schema({
+const Schema = mongoose.Schema;
+const userSchema = new Schema({
   email: {
     type: String,
     required: true,
@@ -17,15 +17,9 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  categoryId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Categories",
-    required: true,
-  },
-  candidateId: {
+  votedTo: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Candidates",
-    required: true,
   },
 });
 
