@@ -11,6 +11,11 @@ const candidateSchema = new Schema({
     ref: "Categories",
     required: true,
   },
-  votedBy: {},
+  votedBy: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
 });
 module.exports = mongoose.model("Candidates", candidateSchema);

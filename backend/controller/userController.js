@@ -1,67 +1,92 @@
 // controllers/userController.js
-
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const userSchema = require("../model/userModel");
-
-exports.createUser = async (req, res) => {
+require("dotenv").config();
+// exports.createUser = (req, res) => {
+//   const user = new userSchema(req.body);
+//   user
+//     .save()
+//     .then((user) =>
+//       res.status(201).json({ message: "User created", data: user })
+//     )
+//     .catch((error) => res.status(400).json({ error: error.message }));
+// };
+exports.registerUser = async (req, res) => {
   try {
-    const user = await User.create(req.body);
-    res.status(201).json(user);
+    const user = new userSchema(req.body);
+    await user.save();
+    res.status(201).json({ message: "User registered successfully" });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(400).json({ error: error.message });
   }
 };
 
-exports.adduser = (req,res)=>{
-    const user = new  userSchema(req.body)
-    user.save().then((err)=>{
-        if(!user){
-            return res.status(400).json({error: 'User not added'})
-        }
-        res.status(200).json({
-            message: 'User Added',
-            data: user
-        })
+exports.loginUser = async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const user = await userSchema.findOne({ email: email });
+    if (!user) {
+      return res.status(401).json({ error: "Invalid email or password" });
+    }
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ error: "Invalid email or password" });
+    }
+    const token = jwt.sign(
+      { id: user._id, email: user.email, role: user.role },
+      process.env.JWT_SECRET
+    );
+    res.status(200).json({ token });
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+exports.getAllUsers = (req, res) => {
+  userSchema
+    .find()
+    .then((users) =>
+      res.status(200).json({ message: "Users retrieved", data: users })
+    )
+    .catch((error) => res.status(400).json({ error: error.message }));
+};
+
+exports.getUserById = (req, res) => {
+  const id = req.params.id;
+  userSchema
+    .findById(id)
+    .then((user) => {
+      if (!user) {
+        throw new Error("User not found");
+      }
+      res.status(200).json({ message: "User retrieved", data: user });
     })
-}
-
-exports.getUser = async (req, res) => {
-  try {
-    const user = await User.findById(req.params.id);
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
-    }
-    res.json(user);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal server error" });
-  }
+    .catch((error) => res.status(404).json({ error: error.message }));
 };
 
-exports.updateUser = async (req, res) => {
-  try {
-    const user = await User.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-    });
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
-    }
-    res.json(user);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal server error" });
-  }
+exports.updateUserById = (req, res) => {
+  const id = req.params.id;
+  const updateData = req.body;
+  userSchema
+    .findByIdAndUpdate(id, updateData, { new: true })
+    .then((user) => {
+      if (!user) {
+        throw new Error("User not found");
+      }
+      res.status(200).json({ message: "User updated", data: user });
+    })
+    .catch((error) => res.status(404).json({ error: error.message }));
 };
 
-exports.deleteUser = async (req, res) => {
-  try {
-    const user = await User.findByIdAndDelete(req.params.id);
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
-    }
-    res.json({ message: "User deleted successfully" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal server error" });
-  }
+exports.deleteUserById = (req, res) => {
+  const id = req.params.id;
+  userSchema
+    .findByIdAndDelete(id)
+    .then((user) => {
+      if (!user) {
+        throw new Error("User not found");
+      }
+      res.status(200).json({ message: "User deleted" });
+    })
+    .catch((error) => res.status(404).json({ error: error.message }));
 };

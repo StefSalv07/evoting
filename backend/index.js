@@ -20,11 +20,10 @@ mongoose
 
 // Routes
 const userRoutes = require("./routes/userRoutes");
-const loginRoutes = require("./routes/loginRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
 const candidateRoutes = require("./routes/candidateRoutes");
-
-app.use("/", userRoutes);
-app.use("/login", loginRoutes);
+const batchRoutes = require("./routes/batchRoutes");
+app.use("/user", userRoutes);
 app.use("/category", categoryRoutes);
 app.use("/candidate", candidateRoutes);
+app.use("/batch", batchRoutes);
