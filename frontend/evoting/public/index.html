@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <script>
+      if (localStorage.theme === 'dark' || !('theme' in localStorage)) {
+        document.querySelector('html').classList.add('dark');
+        document.querySelector('html').style.colorScheme = 'dark';
+      } else {
+        document.querySelector('html').classList.remove('dark');
+        document.querySelector('html').style.colorScheme = 'light';
+      }        
+    </script>
     <meta charset="utf-8" />
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -26,8 +35,15 @@
     -->
     <title>React App</title>
   </head>
-  <body>
+  <body class="font-inter antialiased bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400">
     <noscript>You need to enable JavaScript to run this app.</noscript>
+    <script>
+      if (localStorage.getItem('sidebar-expanded') == 'true') {
+        document.querySelector('body').classList.add('sidebar-expanded');
+      } else {
+        document.querySelector('body').classList.remove('sidebar-expanded');
+      }
+    </script>
     <div id="root"></div>
     <!--
       This HTML file is a template.
@@ -40,4 +56,5 @@
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
   </body>
+  <script type="module" src="../src/index.js"></script>
 </html>
