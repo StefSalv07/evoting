@@ -10,7 +10,7 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
-  email: {
+  email: { // username@iitp.com->daiict.ac.in
     type: String,
     required: true,
     unique: true,
@@ -19,14 +19,14 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
-  role: {
+  role: {//drop down menu
     type: String,
     enum: ["admin", "user"],
     default: "user",
   },
   batch: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Batch",
+    ref: "Batch",//drop-> mTECH BTECh-PHD
   },
   createdAt: {
     type: Date,

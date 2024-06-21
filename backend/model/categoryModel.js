@@ -13,7 +13,7 @@ const categorySchema = new Schema({
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Candidates",
-      required: true,
+      // required: true,
     },
   ],
 });

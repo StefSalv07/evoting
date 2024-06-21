@@ -1,81 +1,112 @@
 const categorySchema = require("../model/categoryModel");
+
 exports.addCategory = (req, res) => {
   const categories = new categorySchema(req.body);
-  categories.save((err, data) => {
-    if (err) {
-      console.log(err);
-    } else {
+  categories
+    .save()
+    .then((data) => {
       res.status(201).json({
-        message: "category Added",
+        message: "Category Added",
         data: data,
       });
-    }
-  });
-};
-exports.getAllCategories = (req, res) => {
-  categorySchema.find((err, data) => {
-    if (err) {
-      res.status(401).json({
-        message: "SomeThing Went Wrong",
-      });
-    } else {
-      res.status(200).json({
-        message: "data Retrived",
-        data: data,
-      });
-    }
-  });
-};
-exports.deleteCategoryById = (req, res) => {
-  console.log(req.params.id);
-
-  categorySchema.findByIdAndDelete(req.params.id, (err, data) => {
-    if (err) {
+    })
+    .catch((err) => {
       console.log(err);
-      res.status(401).json({
-        message: "category not deleted",
-        error: err,
+      res.status(500).json({
+        message: "Failed to add category",
+        error: err.message,
       });
-    } else {
-      if (data != null || data != undefined) {
-        res.status(200).json({
-          message: "category Deleted",
+    });
+};
+
+exports.getAllCategories = (req, res) => {
+  categorySchema
+    .find()
+    .then((data) => {
+      res.status(200).json({
+        message: "Data Retrieved",
+        data: data,
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({
+        message: "Failed to retrieve categories",
+        error: err.message,
+      });
+    });
+};
+
+exports.deleteCategoryById = (req, res) => {
+  const categoryId = req.params.id;
+  categorySchema
+    .findByIdAndDelete(categoryId)
+    .then((data) => {
+      if (!data) {
+        res.status(404).json({
+          message: "Category Not Found",
         });
       } else {
-        res.status(404).json({
-          message: "category Not Found",
+        res.status(200).json({
+          message: "Category Deleted",
         });
       }
-    }
-  });
-};
-exports.updateCategorybyId = (req, res) => {
-  categorySchema.findByIdAndUpdate(req.params.id, req.body, (err, data) => {
-    if (err) {
+    })
+    .catch((err) => {
+      console.log(err);
       res.status(500).json({
-        message: "Some thing went wrong",
+        message: "Failed to delete category",
+        error: err.message,
       });
-    } else {
-      if (data != null || data != undefined) {
+    });
+};
+
+exports.updateCategorybyId = (req, res) => {
+  const categoryId = req.params.id;
+  categorySchema
+    .findByIdAndUpdate(categoryId, req.body, { new: true })
+    .then((data) => {
+      if (!data) {
+        res.status(404).json({
+          message: "Category Not Found",
+        });
+      } else {
         res.status(200).json({
-          message: "category Updated",
+          message: "Category Updated",
           data: data,
         });
       }
-    }
-  });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({
+        message: "Failed to update category",
+        error: err.message,
+      });
+    });
 };
+
 exports.getCategoryById = (req, res) => {
-  categorySchema.findById(req.params.id, (err, data) => {
-    if (err) {
-      res.status(401).json({
-        message: err.message,
+  const categoryId = req.params.id;
+  categorySchema
+    .findById(categoryId)
+    .then((data) => {
+      if (!data) {
+        res.status(404).json({
+          message: "Category Not Found",
+        });
+      } else {
+        res.status(200).json({
+          message: "Category retrieved successfully",
+          data: data,
+        });
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({
+        message: "Failed to retrieve category",
+        error: err.message,
       });
-    } else {
-      res.status(200).json({
-        message: "Category retrieve successfully",
-        data: data,
-      });
-    }
-  });
+    });
 };
